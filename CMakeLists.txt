@@ -23,7 +23,8 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               DBus
               Qml
               Test
-              Xml)
+              Xml
+              Sql)
 
 find_package (KF5 5.11 REQUIRED COMPONENTS
               CoreAddons
