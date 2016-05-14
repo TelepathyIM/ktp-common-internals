@@ -37,6 +37,7 @@ find_package (KF5 5.11 REQUIRED COMPONENTS
               Wallet
               Config
               WindowSystem
+              Emoticons
               IconThemes
               People)
 
