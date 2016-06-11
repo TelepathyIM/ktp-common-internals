@@ -24,7 +24,8 @@ find_package (Qt5 REQUIRED CONFIG COMPONENTS
               Qml
               Test
               Xml
-              Sql)
+              Sql
+              Quick)
 
 find_package (KF5 5.11 REQUIRED COMPONENTS
               CoreAddons
