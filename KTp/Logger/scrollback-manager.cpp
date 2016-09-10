@@ -105,11 +105,15 @@ void ScrollbackManager::fetchHistory(int n)
 {
     if (n > 0 && !d->account.isNull() && !d->textChannel.isNull()) {
         if (d->contactEntity.isValid()) {
-            KTp::LogManager *manager = KTp::LogManager::instance();
-            KTp::PendingLoggerDates *dates = manager->queryDates(d->account, d->contactEntity);
-            connect(dates, SIGNAL(finished(KTp::PendingLoggerOperation*)),
-                    this, SLOT(onDatesFinished(KTp::PendingLoggerOperation*)));
-            return;
+            if (d->textChannel->hasArchiveInterface()) {
+                d->textChannel->getMessages();
+            } else {
+                KTp::LogManager *manager = KTp::LogManager::instance();
+                KTp::PendingLoggerDates *dates = manager->queryDates(d->account, d->contactEntity);
+                connect(dates, SIGNAL(finished(KTp::PendingLoggerOperation*)),
+                        this, SLOT(onDatesFinished(KTp::PendingLoggerOperation*)));
+                return;
+            }
         }
     }
 
