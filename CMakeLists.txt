@@ -50,9 +50,9 @@ find_package (LibOTR 4.0.0)
 find_package (Libgcrypt)
 find_package (telepathy-accounts-signon)
 
-if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
-    set(OTR_LIBS_FOUND TRUE)
-endif ()
+#if (LIBOTR_FOUND AND LIBGCRYPT_FOUND)
+#    set(OTR_LIBS_FOUND TRUE)
+#endif ()
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -118,12 +118,12 @@ add_subdirectory(tools)
 add_subdirectory(data)
 add_subdirectory(tests)
 
-if (OTR_LIBS_FOUND)
-    include_directories (${LIBOTR_INCLUDE_DIR}
-                         ${LIBGCRYPT_INCLUDE_DIR}
-    )
-    add_subdirectory(otr-proxy)
-endif (OTR_LIBS_FOUND)
+#if (OTR_LIBS_FOUND)
+#    include_directories (${LIBOTR_INCLUDE_DIR}
+#                         ${LIBGCRYPT_INCLUDE_DIR}
+#    )
+#    add_subdirectory(otr-proxy)
+#endif (OTR_LIBS_FOUND)
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KTp")
 
