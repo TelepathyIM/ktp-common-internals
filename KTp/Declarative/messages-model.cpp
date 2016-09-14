@@ -214,6 +214,13 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
         }
         Q_EMIT dataChanged(originalMessageIndex, originalMessageIndex);
     } else {
+        const QString messageToken = message.messageToken();
+        if (!messageToken.isEmpty()) {
+            if (d->messagesByMessageToken.contains(messageToken)) {
+                return;
+            }
+        }
+
         int newMessageIndex = 0;
         const QDateTime sentTimestamp = message.sent();
         if (sentTimestamp.isValid()) {
@@ -232,6 +239,12 @@ void MessagesModel::onMessageReceived(const Tp::ReceivedMessage &message)
                                message, d->account, d->textChannel));
 
         endInsertRows();
+
+        if (!messageToken.isEmpty()) {
+            // Insert the message token into the lookup table to avoid message duplication on history received
+            const QPersistentModelIndex &modelIndex(createIndex(newMessageIndex, 0));
+            d->messagesByMessageToken.insert(messageToken, modelIndex);
+        }
 
         if (d->visible) {
             acknowledgeAllMessages();
