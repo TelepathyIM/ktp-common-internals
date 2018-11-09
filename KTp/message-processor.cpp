@@ -197,6 +197,42 @@ KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, cons
         qCDebug(KTP_MESSAGEPROCESSOR) << "running filter:" << plugin.instance->metaObject()->className();
         plugin.instance->filterMessage(message, context);
     }
+
+    if (message.isReply() && !message.mainMessagePart().isEmpty()) {
+        QString mainPart = message.mainMessagePart();
+        qWarning().noquote() << "Process incoming:" << mainPart;
+        QStringList lines = mainPart.split(QRegularExpression(QStringLiteral("<br.{0,2}>")));
+        QString replyLine = lines.first();
+        qWarning().noquote() << "First:" << replyLine;
+
+        replyLine = QStringLiteral("<a href=\"javascript:;\" onclick=\"document.location.hash='#message-%1';\">%2</a>").arg(message.replyToMessageToken()).arg(replyLine);
+        qWarning().noquote() << "First processed:" << replyLine;
+        lines[0] = replyLine;
+
+        bool inQuote = false;
+        for (int i = 1; i < lines.count(); ++ i) {
+            qWarning() << "Second processed:" << i << lines.at(i);
+            if (lines.at(i).startsWith(QLatin1String("&gt;"))) {
+                lines[i].remove(0, 4);
+                if (inQuote) {
+                    continue;
+                } else {
+                    inQuote = true;
+                    lines[i].prepend(QStringLiteral("<blockquote>"));
+                }
+            } else {
+                if (inQuote) {
+                    lines[i - 1].append(QStringLiteral("</blockquote>"));
+                    if (lines.at(i).simplified().isEmpty()) {
+                        lines.removeAt(i);
+                    }
+                }
+                break;
+            }
+        }
+
+        message.setMainMessagePart(lines.join(QStringLiteral("<br/>")));
+    }
     return message;
 }
 
