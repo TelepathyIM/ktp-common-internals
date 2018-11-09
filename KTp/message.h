@@ -135,6 +135,12 @@ public:
     /*! \return the type of the message*/
     Tp::ChannelTextMessageType type() const;
 
+    /** Returns if the message is a reply */
+    bool isReply() const;
+
+    /*! \return the unique token of the original message for this reply */
+    QString replyToMessageToken() const;
+
     /*! \return the alias of the contact who composed this message */
     QString senderAlias() const;
     /*! \return the id of the contact who composed this message */

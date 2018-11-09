@@ -70,6 +70,7 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     d->token = original.messageToken();
     d->messageType = original.messageType();
     d->isHistory = original.isScrollback();
+    d->replyToMessageToken = original.header().value(QLatin1String("reply-to-message-token")).variant().toString();
 
     setMainMessagePart(original.text());
 
@@ -177,6 +178,16 @@ QString Message::token() const
 Tp::ChannelTextMessageType Message::type() const
 {
     return d->messageType;
+}
+
+bool Message::isReply() const
+{
+    return !d->replyToMessageToken.isEmpty();
+}
+
+QString Message::replyToMessageToken() const
+{
+    return d->replyToMessageToken;
 }
 
 QString Message::senderAlias() const

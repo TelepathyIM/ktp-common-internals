@@ -33,6 +33,7 @@ class Message::Private : public QSharedData {
 
     QDateTime   sentTime;
     QString     token;
+    QString     replyToMessageToken;
     Tp::ChannelTextMessageType messageType;
     QVariantMap properties;
     QString     mainPart;
