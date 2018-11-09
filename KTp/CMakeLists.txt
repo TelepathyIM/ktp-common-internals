@@ -89,9 +89,16 @@ set_target_properties(KTpCommonInternals PROPERTIES
                                         EXPORT_NAME CommonInternals
                                         DEFINE_SYMBOL MAKE_KTP_LIB)
 
+                                    # ${TELEPATHY_QT5_LIB_DIR}/lib${TELEPATHY_QT5_LIBRARIES}.so.0.${TELEPATHY_QT5_VERSION}
+
+                                    # ${TELEPATHY_QT5_LIBRARIES}
+
+                                    message("TpQtLibs: " ${TELEPATHY_QT5_LIBRARIES})
+
 target_link_libraries (KTpCommonInternals
                 PUBLIC
                     KF5::Wallet #included from wallet-interface.h
+                    # ${TELEPATHY_QT5_LIB_DIR}/lib${TELEPATHY_QT5_LIBRARIES}.so.0.${TELEPATHY_QT5_VERSION}
                     ${TELEPATHY_QT5_LIBRARIES}
                 PRIVATE
                     ${ktp_private_LIBS}

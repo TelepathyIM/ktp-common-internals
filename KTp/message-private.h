@@ -34,6 +34,7 @@ class Message::Private : public QSharedData {
     QDateTime   sentTime;
     QString     token;
     QString     replyToMessageToken;
+    // QString     forwardFrom
     Tp::ChannelTextMessageType messageType;
     QVariantMap properties;
     QString     mainPart;
@@ -46,6 +47,15 @@ class Message::Private : public QSharedData {
     KTp::ContactPtr sender;
     QString senderAlias;
     QString senderId;
+
+    // Forward header
+    QString forwardedMessageToken;
+    QString forwardedSenderId;
+    QString forwardedSenderAlias;
+    KTp::ContactPtr originalSender;
+
+    // Thumbnail
+    QVector<Thumbnail> thumbnails;
 };
 
 }

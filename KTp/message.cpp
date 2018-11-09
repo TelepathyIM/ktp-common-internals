@@ -95,6 +95,36 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     } else {
         d->direction = KTp::Message::RemoteToLocal;
     }
+
+#if 0
+    const Tp::MessagePart forwardedHeader = original.forwardedHeader();
+#else
+    const Tp::MessagePart forwardedHeader = [&original]() -> Tp::MessagePart {
+        for (int i = 1; i < original.size(); ++i) {
+            const Tp::MessagePart part = original.part(i);
+            if (part.value(QLatin1String("interface")).variant().toString()
+                    == TP_QT_IFACE_CHANNEL + QLatin1String(".Interface.Forwarding")) {
+                return part;
+            }
+        }
+        return {};
+    }();
+#endif
+    for (int i = 1; i < original.size(); ++i) {
+        const Tp::MessagePart part = original.part(i);
+        if (part.value(QLatin1String("thumbnail")).variant().toBool()) {
+            Message::Thumbnail t;
+            t.content = part.value(QLatin1String("content")).variant().toByteArray();
+            t.mimeType = part.value(QLatin1String("content-type")).variant().toByteArray();
+            d->thumbnails.append(t);
+        }
+    }
+
+    if (!forwardedHeader.isEmpty()) {
+        d->forwardedMessageToken = forwardedHeader.value(QLatin1String("message-token")).variant().toString();
+        d->forwardedSenderId = forwardedHeader.value(QLatin1String("message-sender-id")).variant().toString();
+        d->forwardedSenderAlias = forwardedHeader.value(QLatin1String("message-sender-alias")).variant().toString();
+    }
 }
 
 Message::Message(const Message& other):
@@ -224,4 +254,34 @@ bool Message::isHistory() const
 KTp::Message::MessageDirection Message::direction() const
 {
     return d->direction;
+}
+
+bool Message::isForwarded() const
+{
+    return !d->forwardedSenderId.isEmpty();
+}
+
+QString Message::forwardedMessageToken() const
+{
+    return d->forwardedMessageToken;
+}
+
+QString Message::forwardedSenderAlias() const
+{
+    return d->forwardedSenderAlias;
+}
+
+QString Message::forwardedSenderId() const
+{
+    return d->forwardedSenderId;
+}
+
+ContactPtr Message::forwardedSender() const
+{
+    return ContactPtr();
+}
+
+QVector<Message::Thumbnail> Message::thumbnails() const
+{
+    return d->thumbnails;
 }

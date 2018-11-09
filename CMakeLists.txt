@@ -39,6 +39,9 @@ find_package (KF5 5.11 REQUIRED COMPONENTS
 
 set(REQUIRED_TPQT_VERSION 0.9.5)
 
+#set(TelepathyQt5_DIR "/home/OMP/a.akulich/prefix/telepathy/lib/cmake/TelepathyQt5")
+#set(TelepathyQt5Service_DIR "/home/OMP/a.akulich/prefix/telepathy/lib/cmake/TelepathyQt5Service")
+
 find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
 find_package (TelepathyLoggerQt)

@@ -56,6 +56,13 @@ public:
         RemoteToLocal
     };
 
+    struct Thumbnail
+    {
+        QByteArray content;
+        QByteArray mimeType;
+        QByteArray identifier;
+    };
+
     Message(const KTp::Message &other);
     KTp::Message& operator=(const KTp::Message &other);
     virtual ~Message();
@@ -135,18 +142,18 @@ public:
     /*! \return the type of the message*/
     Tp::ChannelTextMessageType type() const;
 
-    /** Returns if the message is a reply */
+    /*! \returns if the message is a reply */
     bool isReply() const;
 
     /*! \return the unique token of the original message for this reply */
     QString replyToMessageToken() const;
 
-    /*! \return the alias of the contact who composed this message */
+    /*! \return the alias of the contact who sent this message */
     QString senderAlias() const;
-    /*! \return the id of the contact who composed this message */
+    /*! \return the id of the contact who sent this message */
     QString senderId() const;
 
-    /*! \return the contact who composed this message
+    /*! \return the contact who sent this message
      *   @warning This may be null for service messages, log messages and other cases
      */
     KTp::ContactPtr sender() const;
@@ -158,6 +165,27 @@ public:
     bool isHistory() const;
 
     MessageDirection direction() const;
+
+    // Forward header
+
+    /*! \returns if the message is forwarded */
+    bool isForwarded() const;
+
+    /*! \return the unique token of the original message for this forward */
+    QString forwardedMessageToken() const;
+
+    /*! \return the id of the contact who composed the original message */
+    QString forwardedSenderId() const;
+
+    /*! \return the alias of the contact who composed the original message */
+    QString forwardedSenderAlias() const;
+
+    /*! \return the contact who composed the original message
+     *   @warning This may be null for service messages, log messages and other cases
+     */
+    KTp::ContactPtr forwardedSender() const;
+
+    QVector<Thumbnail> thumbnails() const;
 
 protected:
     class Private;
