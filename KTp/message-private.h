@@ -56,6 +56,10 @@ class Message::Private : public QSharedData {
 
     // Thumbnail
     QVector<Thumbnail> thumbnails;
+
+    // WebPage
+    QVector<WebPage> webPages;
+
 };
 
 }

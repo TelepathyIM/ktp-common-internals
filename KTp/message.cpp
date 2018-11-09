@@ -72,7 +72,72 @@ Message::Message(const Tp::ReceivedMessage &original, const KTp::MessageContext 
     d->isHistory = original.isScrollback();
     d->replyToMessageToken = original.header().value(QLatin1String("reply-to-message-token")).variant().toString();
 
-    setMainMessagePart(original.text());
+    QSet<QString> altGroupsUsed;
+    QString text;
+
+
+//    for (int i = 1; i < original.size(); i++) {
+//        const Tp::MessagePart part = original.part(i);
+//        const QString interface = part.value("interface").variant().toString();
+//        const QString alternative = part.value("alternative").variant().toString();
+//        if (!alternative.isEmpty() && altGroupsUsed.contains(alternative)) {
+//            continue;
+//        }
+//        if (!interface.isEmpty()) {
+//            continue;
+//        }
+//        const QString contentType = part.value("content-type").variant().toString();
+//        if (contentType == QLatin1String("text/plain")) {
+//            const QString content = part.value("content").variant().toString();
+//            text += content;
+//            if (!alternative.isEmpty()) {
+//                altGroupsUsed << alternative;
+//                continue;
+//            }
+//        }
+//    }
+
+    for (int i = 1; i < original.size(); i++) {
+        const Tp::MessagePart part = original.part(i);
+        const QString interface = part.value(QLatin1String("interface")).variant().toString();
+        const QString alternative = part.value(QLatin1String("alternative")).variant().toString();
+
+        if (!alternative.isEmpty() && altGroupsUsed.contains(alternative)) {
+            continue;
+        }
+
+        if (interface == TP_QT_IFACE_CHANNEL + QLatin1String(".Interface.WebPage")) {
+            d->webPages.append(WebPage());
+            WebPage &page = d->webPages.last();
+            page.url = part.value(QLatin1String("url")).variant().toString();
+            page.displayUrl = part.value(QLatin1String("displayUrl")).variant().toString();
+            page.siteName = part.value(QLatin1String("siteName")).variant().toString();
+            page.title = part.value(QLatin1String("title")).variant().toString();
+            page.description = part.value(QLatin1String("description")).variant().toString();
+
+            if (!alternative.isEmpty()) {
+                altGroupsUsed << alternative;
+                continue;
+            }
+        }
+
+        if (!interface.isEmpty()) {
+            continue;
+        }
+
+        const QString contentType = part.value(QLatin1String("content-type")).variant().toString();
+        if (contentType == QLatin1String("text/plain")) {
+            const QString content = part.value(QLatin1String("content")).variant().toString();
+            text += content;
+
+            if (!alternative.isEmpty()) {
+                altGroupsUsed << alternative;
+                continue;
+            }
+        }
+    }
+
+    setMainMessagePart(text);
 
     if (!original.sender().isNull()) {
         d->sender = KTp::ContactPtr::qObjectCast(original.sender());
@@ -284,4 +349,9 @@ ContactPtr Message::forwardedSender() const
 QVector<Message::Thumbnail> Message::thumbnails() const
 {
     return d->thumbnails;
+}
+
+QVector<Message::WebPage> Message::webPages() const
+{
+    return d->webPages;
 }

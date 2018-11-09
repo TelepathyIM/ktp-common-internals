@@ -191,6 +191,25 @@ KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tp::ReceivedMes
     return processIncomingMessage(KTp::Message(message, context), context);
 }
 
+QString makeBold(const QString &text)
+{
+    if (text.isEmpty()) {
+        return QString();
+    }
+    return QStringLiteral("<b>%1</b>").arg(text);
+}
+
+QString makeLink(const QString &href, QString text)
+{
+    if (href.isEmpty()) {
+        return QString();
+    }
+    if (text.isEmpty()) {
+        text = href;
+    }
+    return QStringLiteral("<a href=\"%1\">%2</a>").arg(href, text);
+}
+
 KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {
     Q_FOREACH (const FilterPlugin &plugin, d->filters) {
@@ -198,18 +217,42 @@ KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, cons
         plugin.instance->filterMessage(message, context);
     }
 
+    if (!message.thumbnails().isEmpty()) {
+        QString thumbnailCode;
+        for (const KTp::Message::Thumbnail &t : message.thumbnails()) {
+            thumbnailCode.append(QStringLiteral("<img src=\"data:%1;base64, %2\"/><br/>")
+                                 .arg(QString::fromLatin1(t.mimeType))
+                                 .arg(QString::fromLatin1(t.content.toBase64()))
+                                 );
+        }
+        QString mainPart = message.mainMessagePart();
+        mainPart.prepend(thumbnailCode);
+        message.setMainMessagePart(mainPart);
+    }
+
     qWarning().noquote() << "message" << message.mainMessagePart() << "is forwarded:" << message.isForwarded();
     if (message.isForwarded()) {
         QString mainPart = message.mainMessagePart();
         mainPart.prepend(QStringLiteral("<b>Forwarded from %1</b><blockquote>").arg(message.forwardedSenderAlias()));
-        mainPart.append(QStringLiteral("</blockquote>"));
         message.setMainMessagePart(mainPart);
     }
-    for (const KTp::Message::Thumbnail &t : message.thumbnails()) {
-        message.appendMessagePart(QStringLiteral("<img src=\"data:%1;base64, %2\" alt=\"Hey!\"/>")
-                                  .arg(QString::fromLatin1(t.mimeType))
-                                  .arg(QString::fromLatin1(t.content.toBase64()))
-                                       );
+
+    if (!message.webPages().isEmpty()) {
+        const int maximumWebPages = qMin<int>(3, message.webPages().count());
+        for (int i = 0; i < maximumWebPages; ++i) {
+            const Message::WebPage &page = message.webPages().at(i);
+            if (page.title.isEmpty()) {
+                continue;
+            }
+            const QString siteName = QStringLiteral("<b>%1</b><br/>").arg(page.siteName);
+            const QString title = QStringLiteral("<b>%1</b><br/>").arg(page.title);
+            QString code = QStringLiteral("<blockquote>%1</blockquote>").arg(makeLink(page.url, siteName)
+                                                                             + QStringLiteral("<br/>")
+                                                                             + title
+                                                                             + QStringLiteral("<br/>")
+                                                                             + page.description);
+            message.appendMessagePart(code);
+        }
     }
 
 //    if (message.isReply() && !message.mainMessagePart().isEmpty()) {
@@ -248,6 +291,14 @@ KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, cons
 
 //        message.setMainMessagePart(lines.join(QStringLiteral("<br/>")));
 //    }
+
+    if (message.isForwarded()) {
+        QString mainPart = message.mainMessagePart();
+        if (mainPart.endsWith(QStringLiteral("<br/>"))) {
+            mainPart.resize(mainPart.size() - 5);
+        }
+        message.appendMessagePart(QStringLiteral("</blockquote>"));
+    }
     return message;
 }
 

@@ -63,6 +63,15 @@ public:
         QByteArray identifier;
     };
 
+    struct WebPage
+    {
+        QString url;
+        QString displayUrl;
+        QString siteName;
+        QString title;
+        QString description;
+    };
+
     Message(const KTp::Message &other);
     KTp::Message& operator=(const KTp::Message &other);
     virtual ~Message();
@@ -186,6 +195,8 @@ public:
     KTp::ContactPtr forwardedSender() const;
 
     QVector<Thumbnail> thumbnails() const;
+
+    QVector<WebPage> webPages() const;
 
 protected:
     class Private;
