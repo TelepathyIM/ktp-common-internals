@@ -153,6 +153,20 @@ public:
 
     MessageDirection direction() const;
 
+    // Forward header
+
+    /*! \returns if the message is forwarded */
+    bool isForwarded() const;
+
+    /*! \return the unique token of the original message for this forward */
+    QString forwardedMessageToken() const;
+
+    /*! \return the id of the contact who composed the original message */
+    QString forwardedSenderId() const;
+
+    /*! \return the alias of the contact who composed the original message */
+    QString forwardedSenderAlias() const;
+
 protected:
     class Private;
 
