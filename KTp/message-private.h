@@ -50,6 +50,7 @@ class Message::Private : public QSharedData {
     QString forwardedMessageToken;
     QString forwardedSenderId;
     QString forwardedSenderAlias;
+    KTp::ContactPtr originalSender;
 };
 
 }

@@ -255,3 +255,8 @@ QString Message::forwardedSenderId() const
 {
     return d->forwardedSenderId;
 }
+
+ContactPtr Message::forwardedSender() const
+{
+    return ContactPtr();
+}

@@ -167,6 +167,11 @@ public:
     /*! \return the alias of the contact who composed the original message */
     QString forwardedSenderAlias() const;
 
+    /*! \return the contact who composed the original message
+     *   @warning This may be null for service messages, log messages and other cases
+     */
+    KTp::ContactPtr forwardedSender() const;
+
 protected:
     class Private;
 
