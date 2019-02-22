@@ -191,12 +191,30 @@ KTp::Message KTp::MessageProcessor::processIncomingMessage(const Tp::ReceivedMes
     return processIncomingMessage(KTp::Message(message, context), context);
 }
 
+QString makeBold(const QString &text)
+{
+    if (text.isEmpty()) {
+        return QString();
+    }
+    return QStringLiteral("<b>%1</b>").arg(text);
+}
+
 KTp::Message MessageProcessor::processIncomingMessage(KTp::Message message, const KTp::MessageContext &context)
 {
     Q_FOREACH (const FilterPlugin &plugin, d->filters) {
         qCDebug(KTP_MESSAGEPROCESSOR) << "running filter:" << plugin.instance->metaObject()->className();
         plugin.instance->filterMessage(message, context);
     }
+
+    if (message.isForwarded()) {
+        QString mainPart = message.mainMessagePart();
+        mainPart = makeBold(QStringLiteral("Forwarded from %1").arg(message.forwardedSenderAlias()))
+                + QStringLiteral("<blockquote>")
+                + mainPart
+                + QStringLiteral("</blockquote>");
+        message.setMainMessagePart(mainPart);
+    }
+
     return message;
 }
 
