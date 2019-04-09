@@ -205,9 +205,9 @@ void Conversation::setAccount(const Tp::AccountPtr &account)
     // If no PersonData yet and a non-null account is set,
     // create new PersonData
     if (!d->personData->isValid() && !d->account.isNull()) {
-        d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath() + QStringLiteral("?") + d->contactId);
+        d->personData = new KPeople::PersonData(QStringLiteral("ktp://") + d->account->objectPath() + QStringLiteral("?") + d->targetContact->id());
 
-        Q_EMIT personDataChanged();
+        //Q_EMIT personDataChanged();
     }
 }
 
