@@ -22,10 +22,10 @@ set (KTP_MESSAGE_FILTER_FRAMEWORK_VERSION "5")
 find_package (Qt5 REQUIRED CONFIG COMPONENTS
               DBus
               Qml
+              Quick
               Test
               Xml
-              Sql
-              Quick)
+              Sql)
 
 find_package (KF5 5.11 REQUIRED COMPONENTS
               CoreAddons

@@ -33,9 +33,9 @@ TextAreaEmojisHandler::TextAreaEmojisHandler(QObject *parent)
       m_emojiMatcher(QStringLiteral("(^|\\s)(:[^\\s]+:)")),
       m_emojiImgMatcher(QStringLiteral("<img.+src=\"([^\\s]+)\".+/>"))
 {
-    KEmoticons *kemoticons = new KEmoticons();
-    kemoticons->setPreferredEmoticonSize(QSize(32, 32));
-    m_theme = kemoticons->theme(QStringLiteral("EmojiOne"));
+    KEmoticons kemoticons;
+    kemoticons.setPreferredEmoticonSize(QSize(32, 32));
+    m_theme = kemoticons.theme(QStringLiteral("EmojiOne"));
 }
 
 TextAreaEmojisHandler::~TextAreaEmojisHandler()
@@ -122,10 +122,14 @@ QString TextAreaEmojisHandler::getText() const
 QString TextAreaEmojisHandler::asciiEmojiForPath(const QString &filePath) const
 {
     const auto emojiValues = m_theme.emoticonsMap().value(filePath);
-    Q_FOREACH (const QString &emoji, emojiValues) {
+    for (const QString &emoji : emojiValues) {
         if (emoji.startsWith(QLatin1Char(':'))) {
             return emoji;
         }
     }
-    return emojiValues.at(0);
+    if (emojiValues.size() > 0) {
+        return emojiValues.at(0);
+    } else {
+        return QString();
+    }
 }
