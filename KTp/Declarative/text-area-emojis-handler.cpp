@@ -100,23 +100,18 @@ void TextAreaEmojisHandler::onTextChanged()
 
 QString TextAreaEmojisHandler::getText() const
 {
-    auto documentHtml = m_document->toHtml();
+    QString documentHtml = m_document->toHtml();
     auto emojiImgs = m_emojiImgMatcher.globalMatch(documentHtml);
 
     while (emojiImgs.hasNext()) {
         auto emoji = emojiImgs.next();
-        documentHtml.replace(emoji.capturedStart(0), emoji.capturedLength(0), asciiEmojiForPath(emoji.captured(1)));
+        QUrl emojiUrl(emoji.captured(1));
+        documentHtml.replace(emoji.capturedStart(0), emoji.capturedLength(0), asciiEmojiForPath(emojiUrl.toLocalFile()));
     }
 
-    QTextDocument *tempDocument = new QTextDocument();
-    tempDocument->setHtml(documentHtml);
-
-    int start = qBound(0, 0, tempDocument->characterCount() - 1);
-    int end = qBound(0, 100, tempDocument->characterCount() - 1);
-    QTextCursor cursor(tempDocument);
-    cursor.setPosition(start, QTextCursor::MoveAnchor);
-    cursor.setPosition(end, QTextCursor::KeepAnchor);
-    return cursor.selection().toPlainText().trimmed();
+    QTextDocument tempDocument;
+    tempDocument.setHtml(documentHtml);
+    return tempDocument.toPlainText();
 }
 
 QString TextAreaEmojisHandler::asciiEmojiForPath(const QString &filePath) const
