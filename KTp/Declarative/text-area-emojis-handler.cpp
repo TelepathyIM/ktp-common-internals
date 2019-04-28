@@ -111,20 +111,20 @@ QString TextAreaEmojisHandler::getText() const
 
     QTextDocument tempDocument;
     tempDocument.setHtml(documentHtml);
-    qDebug() << tempDocument.toPlainText().toHtmlEscaped();
     return tempDocument.toPlainText();
 }
 
 QString TextAreaEmojisHandler::asciiEmojiForPath(const QString &filePath) const
 {
     const auto emojiValues = m_theme.emoticonsMap().value(filePath);
-    for(const QString &emoji: emojiValues) {
+    for (const QString &emoji : emojiValues) {
         if (emoji.startsWith(QLatin1Char(':'))) {
             return emoji;
         }
     }
-    if (emojiValues.size() > 0)
+    if (emojiValues.size() > 0) {
         return emojiValues.at(0);
-    else
+    } else {
         return QString();
+    }
 }
