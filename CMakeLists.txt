@@ -44,6 +44,10 @@ find_package (TelepathyQt5 ${REQUIRED_TPQT_VERSION} REQUIRED)
 find_package (TelepathyQt5Service ${REQUIRED_TPQT_VERSION} REQUIRED) #used for the otr-proxy
 find_package (TelepathyLoggerQt)
 
+if(NOT TELEPATHY_QT5_VERSION VERSION_LESS "0.9.8") # Use NOT VERSION_LESS because VERSION_GREATER_EQUAL is not available until CMake-3.7
+    set(TELEPATHY_QT5_LIBRARIES TelepathyQt5::Core)
+endif()
+
 find_package (KAccounts)
 find_package (AccountsQt5 1.10 CONFIG)
 find_package (SignOnQt5 8.55 CONFIG)
