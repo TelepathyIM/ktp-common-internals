@@ -61,6 +61,11 @@ set (ktp_common_internals_private_HDRS
      ${CMAKE_CURRENT_BINARY_DIR}/ktpcommoninternals_export.h
 )
 
+set (ktp_private_LIBS
+     ${ktp_private_LIBS}
+     Qt5::Xml
+     )
+
 if (TelepathyLoggerQt_FOUND)
     set (ktp_private_LIBS
          ${ktp_private_LIBS}
