@@ -192,7 +192,7 @@ QPixmap KPeopleTranslationProxy::contactPixmap(const QModelIndex &index) const
     const QString keyCache = id + (presenceType == Tp::ConnectionPresenceTypeOffline ? QLatin1String("-offline") : QLatin1String("-online"));
 
     //check pixmap cache for the avatar, if not present, load the avatar
-    if (!QPixmapCache::find(keyCache, avatar)){
+    if (!QPixmapCache::find(keyCache, &avatar)){
         const QVariantList files = index.data(KTp::ContactAvatarPathRole).toList();
         QString file;
         if (!files.isEmpty()) {

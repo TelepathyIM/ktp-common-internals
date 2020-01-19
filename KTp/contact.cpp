@@ -178,7 +178,7 @@ QPixmap KTp::Contact::avatarPixmap()
     QPixmap avatar;
 
     //check pixmap cache for the avatar, if not present, load the avatar
-    if (!QPixmapCache::find(keyCache(), avatar)){
+    if (!QPixmapCache::find(keyCache(), &avatar)){
         QString file = avatarData().fileName;
 
         //if contact does not provide path, let's see if we have avatar for the stored token
