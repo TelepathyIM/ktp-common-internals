@@ -109,8 +109,7 @@ static inline QString formatTimestamp(double timestamp)
         time_str[0] = '\0';
     }
 
-    QString str;
-    str.sprintf("%s.%06d", time_str, ms);
+    QString str = QStringLiteral("%1.%2").arg(QString::fromUtf8(time_str)).arg(ms, 6, 10, QLatin1Char('0'));
     return str;
 }
 
@@ -118,7 +117,7 @@ void DebugMessageView::appendMessage(const Tp::DebugMessage &msg)
 {
     if (isVisible()) {
         QString message = QString(formatTimestamp(msg.timestamp) %
-                                QLatin1Literal(" - [") % msg.domain % QLatin1Literal("] ") %
+                                QLatin1String(" - [") % msg.domain % QLatin1String("] ") %
                                 msg.message);
         m_editor->setReadWrite(true);
         m_editor->insertText(m_editor->documentEnd(), message + QString::fromLatin1("\n"));
